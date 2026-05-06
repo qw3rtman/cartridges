@@ -56,6 +56,7 @@ MODEL_TO_SYSTEM_PROMPT_TOKENIZER = {
     "Qwen/Qwen3-8b": qwen_tokenize_data_into_system_prompt,
     "Qwen/Qwen3-14b": qwen_tokenize_data_into_system_prompt,
     "Qwen/Qwen3-32b": qwen_tokenize_data_into_system_prompt,
+    "Qwen/Qwen3-30B-A3B-Instruct-2507": qwen_tokenize_data_into_system_prompt,
 }
 MODEL_TO_SYSTEM_PROMPT_TOKENIZER = {k.lower(): v for k, v in MODEL_TO_SYSTEM_PROMPT_TOKENIZER.items()}
 

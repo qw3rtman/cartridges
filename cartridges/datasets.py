@@ -217,6 +217,7 @@ MODEL_TO_MESSAGE_CONVERTER = {
     "Qwen/Qwen3-8b": qwen_messages_to_element,
     "Qwen/Qwen3-14b": qwen_messages_to_element,
     "Qwen/Qwen3-32b": qwen_messages_to_element,
+    "Qwen/Qwen3-30B-A3B-Instruct-2507": qwen_messages_to_element,
     "meta-llama/Llama-3.1-8B-Instruct": llama3_messages_to_element,
     "meta-llama/Llama-3.2-3B-Instruct": llama3_messages_to_element,
     "meta-llama/Llama-3.2-1B-Instruct": llama3_messages_to_element,

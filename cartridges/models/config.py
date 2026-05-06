@@ -114,7 +114,7 @@ class PeftConfig(BaseConfig):
 class HFModelConfig(ModelConfig):
     pretrained_model_name_or_path: Optional[str] = None
     load_kwargs: Optional[Dict] = Field(default_factory=dict)
-    
+
     # PEFT configuration
     peft: PeftConfig = Field(default_factory=PeftConfig)
 
@@ -123,6 +123,11 @@ class HFModelConfig(ModelConfig):
 
     model_cls: Optional[Type[PreTrainedModel]] = None
     attn_implementation: Optional[Literal['einsum', 'sdpa']] = None
+
+    # Activation checkpointing — needed when training a small cartridge on top
+    # of a large frozen base (e.g. Qwen3-30B-A3B-MoE) so that the backward pass
+    # doesn't have to keep all 48 layers of activations resident.
+    gradient_checkpointing: bool = False
 
     def instantiate(self):
         if self.model_cls is None:
@@ -136,12 +141,20 @@ class HFModelConfig(ModelConfig):
             **self.load_kwargs
         )
 
+        if self.gradient_checkpointing:
+            # `use_reentrant=False` is required because the Flex* layers are
+            # called with a single dataclass positional arg (Qwen3MoeBatch);
+            # reentrant checkpointing only properly tracks tensor args.
+            model.gradient_checkpointing_enable(
+                gradient_checkpointing_kwargs={"use_reentrant": False}
+            )
+
         if self.tuning_method == 'peft' and self.peft.enabled:
             from peft import get_peft_model
             peft_config = self.peft.get_peft_config()
             if peft_config is not None:
                 model = get_peft_model(model, peft_config)
                 model.print_trainable_parameters()
-        
+
         return model
     
